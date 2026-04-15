@@ -1,0 +1,160 @@
+registry_version: 1
+name: official
+description: "Official cognitive bases — meta-cognitive instruction sets for AI agents"
+
+bases:
+  # === Tier 5: Core Reasoning Paradigms ===
+
+  - name: first-principles
+    display_name: "第一性原理 First Principles"
+    description: "审计假设，分解到可验证基础，无约束重建"
+    tier: 5
+    tags: [core, reasoning, decomposition]
+    repo: "https://github.com/d-wwei/first-principles.git"
+    schema_version: 1
+
+  - name: dialectical-thinking
+    display_name: "矛盾论 Dialectical Thinking"
+    description: "以矛盾论为核心的辩证思维，识别主要矛盾，综合超越对立"
+    tier: 5
+    tags: [core, reasoning, contradiction]
+    repo: "https://github.com/d-wwei/dialectical-thinking.git"
+    schema_version: 1
+
+  - name: results-driven
+    display_name: "以终为始 Results-Driven"
+    description: "结果导向——以成果为标准，以证据为支撑，拒绝半成品"
+    tier: 5
+    tags: [core, verification, completion]
+    repo: "https://github.com/d-wwei/what-is-good-job.git"
+    schema_version: 1
+
+  - name: systems-thinking
+    display_name: "系统性思考 Systems Thinking"
+    description: "看到反馈循环、涌现、杠杆点的系统性视野"
+    tier: 5
+    tags: [core, reasoning, feedback-loops]
+    repo: "https://github.com/d-wwei/systems-thinking.git"
+    schema_version: 1
+
+  # === Tier 6: Specialized Cognitive Tools ===
+
+  - name: attention-allocation
+    display_name: "主要矛盾 Attention Allocation"
+    description: "在信息过载中识别此刻最值得关注的信号，集中优势兵力"
+    tier: 6
+    tags: [focus, prioritization, constraint]
+    repo: "https://github.com/d-wwei/attention-allocation.git"
+    schema_version: 1
+
+  - name: bayesian-reasoning
+    display_name: "概率思维 Bayesian Reasoning"
+    description: "从二元对错转向概率分布，用证据校准置信度"
+    tier: 6
+    tags: [probability, evidence, calibration]
+    repo: "https://github.com/d-wwei/bayesian-reasoning.git"
+    schema_version: 1
+
+  - name: constraint-as-catalyst
+    display_name: "以约求变 Constraint as Catalyst"
+    description: "约束是创新的催化剂，刻意制造压力激发创新"
+    tier: 6
+    tags: [creativity, constraint, innovation]
+    repo: "https://github.com/d-wwei/constraint-as-catalyst.git"
+    schema_version: 1
+
+  - name: conviction-override
+    display_name: "信念驱动 Conviction Override"
+    description: "识别何时合理地用信念覆盖理性评估"
+    tier: 6
+    tags: [judgment, conviction, override]
+    repo: "https://github.com/d-wwei/conviction-override.git"
+    schema_version: 1
+
+  - name: cross-domain-connector
+    display_name: "跨领域连接 Cross-Domain Connector"
+    description: "提取问题的抽象结构，扫描其他学科的同构模式"
+    tier: 6
+    tags: [interdisciplinary, analogy, pattern]
+    repo: "https://github.com/d-wwei/cross-domain-connector.git"
+    schema_version: 1
+
+  - name: double-loop-learning
+    display_name: "双环思考 Double-Loop Learning"
+    description: "不只修正错误，质疑产生错误的底层假设"
+    tier: 6
+    tags: [reflection, learning, assumptions]
+    repo: "https://github.com/d-wwei/double-loop-learning.git"
+    schema_version: 1
+
+  - name: frame-auditing
+    display_name: "框架审计 Frame Auditing"
+    description: "识别你在哪个不可见的认知框架里，决定是否要换"
+    tier: 6
+    tags: [meta-cognition, framing, bias]
+    repo: "https://github.com/d-wwei/frame-auditing.git"
+    schema_version: 1
+
+  - name: interactive-cognition
+    display_name: "知彼 Interactive Cognition"
+    description: "建模他人的思考，管理信息流，据此调整策略"
+    tier: 6
+    tags: [game-theory, stakeholder, strategy]
+    repo: "https://github.com/d-wwei/interactive-cognition.git"
+    schema_version: 1
+
+  - name: inversion-thinking
+    display_name: "逆向思考 Inversion Thinking"
+    description: "从失败倒推，避免愚蠢比追求聪明更可靠"
+    tier: 6
+    tags: [risk, pre-mortem, failure-analysis]
+    repo: "https://github.com/d-wwei/inversion-thinking.git"
+    schema_version: 1
+
+  - name: motivation-audit
+    display_name: "正心诚意 Motivation Audit"
+    description: "分析问题前，先审查自己的动机纯度"
+    tier: 6
+    tags: [self-awareness, motivation, integrity]
+    repo: "https://github.com/d-wwei/motivation-audit.git"
+    schema_version: 1
+
+  - name: non-attachment
+    display_name: "认知自由 Non-Attachment"
+    description: "不与任何框架合一，所有认知底座的元保险"
+    tier: 6
+    tags: [meta-cognition, flexibility, detachment]
+    repo: "https://github.com/d-wwei/non-attachment.git"
+    schema_version: 1
+
+  - name: principled-action
+    display_name: "知行合一 Principled Action"
+    description: "实践-认识螺旋，做正确的事而非容易的事"
+    tier: 6
+    tags: [action, practice, integrity]
+    repo: "https://github.com/d-wwei/principled-action.git"
+    schema_version: 1
+
+  - name: second-order-thinking
+    display_name: "二阶思维 Second-Order Thinking"
+    description: "沿因果链追2-3步，识别非预期后果"
+    tier: 6
+    tags: [consequences, cascading, decision]
+    repo: "https://github.com/d-wwei/second-order-thinking.git"
+    schema_version: 1
+
+  - name: tacit-knowledge
+    display_name: "默会知识 Tacit Knowledge"
+    description: "识别和运用不可言说的专业判断与模式识别"
+    tier: 6
+    tags: [expertise, judgment, practitioner]
+    repo: "https://github.com/d-wwei/tacit-knowledge.git"
+    schema_version: 1
+
+  - name: temporal-wisdom
+    display_name: "和时间做朋友 Temporal Wisdom"
+    description: "选择让时间成为放大器的策略，复利效应，阶段识别"
+    tier: 6
+    tags: [strategy, compounding, timing]
+    repo: "https://github.com/d-wwei/temporal-wisdom.git"
+    schema_version: 1

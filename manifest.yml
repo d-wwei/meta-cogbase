@@ -1,0 +1,13 @@
+schema_version: 1
+name: meta-cogbase
+tier: 6
+
+activation:
+  - "用户想安装、搜索、更新、管理认知底座"
+  - "用户想发现新的认知底座"
+  - "用户想从 GitHub 获取认知底座"
+  - "User wants to install, search, update, or manage cognitive bases"
+
+recommends:
+  - cognitive-kernel
+  - cognitive-base-creator
