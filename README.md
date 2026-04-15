@@ -30,19 +30,12 @@ No skill was invoked. The agent's *thinking changed* — across domains it was n
 
 Cognitive bases don't compete — they cover different axes, like an OS has file management, memory management, and process scheduling running simultaneously.
 
-### Tier 5 — Core Reasoning Paradigms
-
 | Base | What It Changes |
 |------|----------------|
 | [First Principles](https://github.com/d-wwei/first-principles) | How the agent **analyzes** — audit assumptions, decompose to fundamentals, reconstruct freely |
 | [Results-Driven](https://github.com/d-wwei/what-is-good-job) | How the agent **evaluates completion** — outcome over activity, evidence over confidence |
 | [Systems Thinking](https://github.com/d-wwei/systems-thinking) | How the agent **sees structure** — feedback loops, leverage points, emergent behavior |
 | [Dialectical Thinking](https://github.com/d-wwei/dialectical-thinking) | How the agent **handles contradiction** — identify tensions, locate the principal one, synthesize beyond opposition |
-
-### Tier 6 — Specialized Cognitive Tools
-
-| Base | Axis |
-|------|------|
 | [Tacit Knowledge](https://github.com/d-wwei/tacit-knowledge) | Think like a 10-year practitioner, not a textbook |
 | [Bayesian Reasoning](https://github.com/d-wwei/bayesian-reasoning) | Calibrated probability, not binary judgments |
 | [Inversion Thinking](https://github.com/d-wwei/inversion-thinking) | Map failure modes first, then avoid them |
@@ -60,6 +53,45 @@ Cognitive bases don't compete — they cover different axes, like an OS has file
 | [Conviction Override](https://github.com/d-wwei/conviction-override) | Override rational caution when obstacles are convention, not physics |
 
 Install three, five, or all nineteen. They don't conflict — each one governs a different axis.
+
+## Do Rules Actually Work? The 6-Layer Intervention Framework
+
+Write 30 lines of rules into CLAUDE.md and the agent will follow them? Not necessarily. Rules are just text. Under cognitive load, agents skip rules — the same way humans forget checklists when they're busy. "Please follow these rules" is the weakest form of intervention.
+
+That's why each cognitive base isn't just a Markdown file. Every base describes — through its `manifest.yml` — what it needs at 6 different intervention levels, from strongest to weakest:
+
+| Layer | Mechanism | How It Enforces |
+|-------|-----------|----------------|
+| **L1 Output Templates** | Agent's output must include specific fields | Structural — incomplete without them, can't skip |
+| **L2 Hooks** | Auto-inject reminders before key actions | Environmental — agent gets intercepted even if it tries to skip |
+| **L3 If-Then Triggers** | Pattern-matched conditions fire automatic actions | Reflexive — matches pattern, executes, no willpower needed |
+| **L4 External Verification** | A sub-agent runs adversarial review | External oversight — checking yourself doesn't work, someone else checks |
+| **L5 Core Rules** | A few critical rules stay in context permanently | Persistent reminder — always visible, but still voluntary |
+| **L6 Skill Reference** | Full framework loaded on demand | Weakest — agent has to actively choose to read it |
+
+Regular skills only work at L6 — loaded when needed, forgotten after. Cognitive bases cover L1 through L6. The most critical rules use structural enforcement (L1) and automatic triggers (L2-L3), not agent willpower.
+
+**Analogy:** L6 is a poster on the wall. L1 is a limit switch welded to the assembly line. The poster depends on someone reading it. The limit switch stops the line physically — the part isn't in position, the machine won't move.
+
+## Why You Need a Cognitive Kernel
+
+A single cognitive base can be installed standalone — each one ships with an `install.sh` that writes rules directly into your agent's config.
+
+But when you have 3, 5, or 19 bases installed, three problems emerge:
+
+**1. Conflicts.** Different bases' L1 output fields may overlap. L3 triggers may contradict. First Principles says "decompose to fundamentals," Systems Thinking says "see the whole first" — same problem, opposite directions. Who goes first?
+
+**2. Budget.** The agent's context window is finite. 19 bases fully loaded = 100+ rules active simultaneously. Too many rules equals no rules — the agent's attention gets diluted and nothing sticks. Someone needs to manage "which rules matter most right now."
+
+**3. 6-Layer Assembly.** Each base's manifest.yml describes what it needs at each intervention layer. But "describes" isn't "executes" — someone needs to read the manifest, write L1 fields into output templates, register L2 hooks with the platform, and assemble L3 triggers into the runtime.
+
+[Cognitive Kernel](https://github.com/d-wwei/cognitive-kernel) does these three things:
+
+- **Conflict analysis** — when installing a new base, automatically detects overlaps, tensions, and conflicts with installed bases, and proposes resolutions
+- **Budget management** — controls how many core rules are active simultaneously (default: max 4 bases' L5 rules), preventing attention dilution
+- **6-layer assembly** — reads each base's manifest.yml and distributes rules to the correct intervention layers
+
+You can use cognitive bases without the kernel (each base's install.sh injects core rules directly). But with the kernel, bases work together instead of interfering with each other.
 
 ## meta-cogbase — The Integrated Solution
 
