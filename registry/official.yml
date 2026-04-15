@@ -88,7 +88,7 @@ bases:
     schema_version: 1
 
   - name: frame-auditing
-    display_name: "框架审计 Frame Auditing"
+    display_name: "隐含假设审计 Frame Auditing"
     description: "识别你在哪个不可见的认知框架里，决定是否要换"
     tier: 6
     tags: [meta-cognition, framing, bias]
@@ -120,7 +120,7 @@ bases:
     schema_version: 1
 
   - name: non-attachment
-    display_name: "认知自由 Non-Attachment"
+    display_name: "认知去蔽 Non-Attachment"
     description: "不与任何框架合一，所有认知底座的元保险"
     tier: 6
     tags: [meta-cognition, flexibility, detachment]
