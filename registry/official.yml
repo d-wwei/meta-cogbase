@@ -40,7 +40,7 @@ bases:
   # === Tier 6: Specialized Cognitive Tools ===
 
   - name: attention-allocation
-    display_name: "主要矛盾 Attention Allocation"
+    display_name: "提纲挈领 Attention Allocation"
     description: "在信息过载中识别此刻最值得关注的信号，集中优势兵力"
     tier: 6
     tags: [focus, prioritization, constraint]
