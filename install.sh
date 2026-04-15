@@ -29,6 +29,25 @@ error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
 
 # ============================================================================
+# Version Detection (for display purposes)
+# ============================================================================
+
+get_claude_code_version() {
+    local ver
+    ver=$(set +e +o pipefail; claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1; true)
+    echo "${ver:-unknown}"
+}
+
+get_gemini_cli_version() {
+    local ver
+    ver=$(set +e +o pipefail; gemini --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1; true)
+    if [[ -z "$ver" ]]; then
+        ver=$(set +e +o pipefail; npm list -g @google/gemini-cli 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1; true)
+    fi
+    echo "${ver:-unknown}"
+}
+
+# ============================================================================
 # Agent Detection
 # ============================================================================
 
@@ -367,6 +386,8 @@ EOF
 
 MODE="auto"
 ACTION="install"
+CURRENT_AGENT=""
+ALL_MODE=false
 PASSTHROUGH_ARGS=()
 
 while [[ $# -gt 0 ]]; do
@@ -374,6 +395,8 @@ while [[ $# -gt 0 ]]; do
         --inline)    MODE="inline"; PASSTHROUGH_ARGS+=("$1") ;;
         --status)    ACTION="status" ;;
         --uninstall) ACTION="uninstall" ;;
+        --agent=*)   CURRENT_AGENT="${1#--agent=}" ;;
+        --all)       ALL_MODE=true ;;
         --help|-h)   ACTION="help" ;;
         *)           PASSTHROUGH_ARGS+=("$1") ;;
     esac
@@ -384,16 +407,19 @@ if [[ "$ACTION" == "help" ]]; then
     echo "Usage: install.sh [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  --status      Show installation status"
-    echo "  --uninstall   Remove meta-cogbase from all agents"
-    echo "  --inline      Force inline mode (skip @ ref detection)"
-    echo "  --help        Show this help"
+    echo "  --status        Show installation status"
+    echo "  --uninstall     Remove meta-cogbase from all agents"
+    echo "  --agent=NAME    Install to a specific agent (e.g., --agent=claude-code)"
+    echo "  --all           Install to all detected agents without asking"
+    echo "  --inline        Force inline mode (skip @ ref detection)"
+    echo "  --help          Show this help"
     echo ""
     echo "This installer will:"
-    echo "  1. Install meta-cogbase skill on all detected AI agents"
-    echo "  2. Install cognitive-kernel (if not already installed)"
-    echo "  3. Install cognitive-base-creator (if not already installed)"
-    echo "  4. Initialize ~/.meta-cogbase/ data directory"
+    echo "  1. Detect available AI agent platforms"
+    echo "  2. Let you choose which platforms to install to"
+    echo "  3. Install cognitive-kernel (if not already installed)"
+    echo "  4. Install cognitive-base-creator (if not already installed)"
+    echo "  5. Initialize ~/.meta-cogbase/ data directory"
     exit 0
 fi
 
@@ -403,20 +429,24 @@ if [[ "$ACTION" == "status" ]]; then
 fi
 
 # Detect agents
-AGENTS=$(detect_all)
+AGENTS_STR=$(detect_all)
+AGENTS_ARRAY=($AGENTS_STR)
 
-if [[ -z "$AGENTS" ]]; then
+if [[ ${#AGENTS_ARRAY[@]} -eq 0 ]]; then
     error "No supported AI agents detected."
     error "Supported: Claude Code, Gemini CLI, Codex CLI, Cursor, OpenCode, OpenClaw"
     exit 1
 fi
 
-log "Detected agents: $AGENTS"
+log "Detected ${#AGENTS_ARRAY[@]} agent(s):"
+for i in "${!AGENTS_ARRAY[@]}"; do
+    echo "  $((i+1)). ${AGENTS_ARRAY[$i]}"
+done
 echo ""
 
 if [[ "$ACTION" == "uninstall" ]]; then
     log "=== Uninstalling $BASE_TITLE ==="
-    for agent in $AGENTS; do
+    for agent in "${AGENTS_ARRAY[@]}"; do
         case "$agent" in
             claude-code) uninstall_claude_code ;;
             gemini-cli)  uninstall_gemini_cli ;;
@@ -432,21 +462,92 @@ if [[ "$ACTION" == "uninstall" ]]; then
     exit 0
 fi
 
+# === Determine which agents to install to ===
+
+SELECTED_AGENTS=()
+
+if [[ -n "$CURRENT_AGENT" ]]; then
+    # Agent mode: auto-install to specified agent
+    SELECTED_AGENTS+=("$CURRENT_AGENT")
+    success "Auto-installing to current agent: $CURRENT_AGENT"
+
+    # Ask about others if more detected
+    OTHER_AGENTS=()
+    for agent in "${AGENTS_ARRAY[@]}"; do
+        [[ "$agent" != "$CURRENT_AGENT" ]] && OTHER_AGENTS+=("$agent")
+    done
+
+    if [[ ${#OTHER_AGENTS[@]} -gt 0 ]]; then
+        if $ALL_MODE; then
+            SELECTED_AGENTS+=("${OTHER_AGENTS[@]}")
+        else
+            echo ""
+            log "Other agents detected:"
+            for i in "${!OTHER_AGENTS[@]}"; do
+                echo "  $((i+1)). ${OTHER_AGENTS[$i]}"
+            done
+            echo ""
+            read -rp "Also install to these? Enter numbers (e.g., 1 3) or 'all' or 'none': " CHOICE
+            if [[ "$CHOICE" == "all" ]]; then
+                SELECTED_AGENTS+=("${OTHER_AGENTS[@]}")
+            elif [[ "$CHOICE" != "none" && -n "$CHOICE" ]]; then
+                for num in $CHOICE; do
+                    local_idx=$((num - 1))
+                    if [[ $local_idx -ge 0 && $local_idx -lt ${#OTHER_AGENTS[@]} ]]; then
+                        SELECTED_AGENTS+=("${OTHER_AGENTS[$local_idx]}")
+                    fi
+                done
+            fi
+        fi
+    fi
+
+elif $ALL_MODE; then
+    # --all flag: install to everything
+    SELECTED_AGENTS=("${AGENTS_ARRAY[@]}")
+
+elif [[ ${#AGENTS_ARRAY[@]} -eq 1 ]]; then
+    # Only one agent: install directly
+    SELECTED_AGENTS=("${AGENTS_ARRAY[0]}")
+
+else
+    # Terminal mode: let user choose
+    echo "Which agents to install to?"
+    echo "  Enter numbers separated by spaces (e.g., 1 3 5)"
+    echo "  Or 'all' for all detected agents"
+    echo ""
+    read -rp "Your choice: " CHOICE
+    if [[ "$CHOICE" == "all" ]]; then
+        SELECTED_AGENTS=("${AGENTS_ARRAY[@]}")
+    elif [[ -n "$CHOICE" ]]; then
+        for num in $CHOICE; do
+            local_idx=$((num - 1))
+            if [[ $local_idx -ge 0 && $local_idx -lt ${#AGENTS_ARRAY[@]} ]]; then
+                SELECTED_AGENTS+=("${AGENTS_ARRAY[$local_idx]}")
+            fi
+        done
+    fi
+fi
+
+if [[ ${#SELECTED_AGENTS[@]} -eq 0 ]]; then
+    error "No agents selected. Nothing to install."
+    exit 1
+fi
+
 # === Install ===
 log "=== Installing $BASE_TITLE ==="
 echo ""
 
-# Step 1: Install meta-cogbase skill on all agents
+# Step 1: Install meta-cogbase skill on selected agents
 log "Step 1/4: Installing $BASE_TITLE skill..."
 INSTALLED=0
-for agent in $AGENTS; do
+for agent in "${SELECTED_AGENTS[@]}"; do
     case "$agent" in
-        claude-code) install_claude_code && ((INSTALLED++)) ;;
-        gemini-cli)  install_gemini_cli && ((INSTALLED++)) ;;
-        codex-cli)   install_codex_cli && ((INSTALLED++)) ;;
-        cursor)      install_cursor && ((INSTALLED++)) ;;
-        opencode)    install_opencode && ((INSTALLED++)) ;;
-        openclaw)    install_openclaw && ((INSTALLED++)) ;;
+        claude-code) install_claude_code && INSTALLED=$((INSTALLED + 1)) ;;
+        gemini-cli)  install_gemini_cli && INSTALLED=$((INSTALLED + 1)) ;;
+        codex-cli)   install_codex_cli && INSTALLED=$((INSTALLED + 1)) ;;
+        cursor)      install_cursor && INSTALLED=$((INSTALLED + 1)) ;;
+        opencode)    install_opencode && INSTALLED=$((INSTALLED + 1)) ;;
+        openclaw)    install_openclaw && INSTALLED=$((INSTALLED + 1)) ;;
     esac
 done
 echo ""
