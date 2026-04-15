@@ -72,7 +72,7 @@ bases:
     schema_version: 1
 
   - name: cross-domain-connector
-    display_name: "跨领域连接 Cross-Domain Connector"
+    display_name: "跨学科思考 Cross-Domain Connector"
     description: "提取问题的抽象结构，扫描其他学科的同构模式"
     tier: 6
     tags: [interdisciplinary, analogy, pattern]
