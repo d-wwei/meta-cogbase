@@ -96,7 +96,7 @@ bases:
     schema_version: 1
 
   - name: interactive-cognition
-    display_name: "知彼 Interactive Cognition"
+    display_name: "知彼解己 Interactive Cognition"
     description: "建模他人的思考，管理信息流，据此调整策略"
     tier: 6
     tags: [game-theory, stakeholder, strategy]
